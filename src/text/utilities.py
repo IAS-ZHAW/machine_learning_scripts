@@ -10,17 +10,17 @@ import re
 import numpy as np
 
 from scikits.learn.feature_extraction.text import WordNGramAnalyzer
+from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
+from text.thes.openthesaurus import OpenThesaurus
 
-replacements = {'ä' : 'a', 'ö' : 'o', 'ü' : 'u', 'é' : 'e', 'à' : 'a', 'è' : 'e', 'ß' : 'ss', "buddel" : '', "willi" : '', "kunst" : '', "kunstler" : '', " künstler" : '', " werk" : '', " art" : '', " museum" : '', " bad" : ''}
+replacements = {'ï¿½' : 'a', 'ï¿½' : 'o', 'Ã¼' : 'u', 'ï¿½' : 'e', 'ï¿½' : 'a', 'ï¿½' : 'e', 'ï¿½' : 'ss', "buddel" : '', "willi" : '', "kunst" : '', "kunstler" : '', " kï¿½nstler" : '', " werk" : '', " art" : '', " museum" : '', " bad" : ''}
+thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
 
 def to_lower(documents):
     """Transforms a list of strings to lowercase"""
     for i in range(len(documents)):
         documents[i] = documents[i].lower()
-        lang = language_decider(documents[i])
-        if lang > 0:
-            print str(lang) + ": " + documents[i]
     return documents
 
 def remove_urls(documents):
@@ -34,15 +34,16 @@ def remove_urls(documents):
 
 
 def remove_special_chars(documents):
-    """Removes special characters like ä, ö, ü, é from a list of strings"""
+    """Removes special characters like ï¿½, ï¿½, ï¿½, ï¿½ from a list of strings"""
     for i in range(len(documents)):        
         for key, value in replacements.items():
             documents[i] = documents[i].replace(key, value)    
     return documents
 
 def language_decider(document):
-    """A very simple approach to find out about the language of a string
-    only supports german, english, french. Based on counting special words."""
+    """A very! simple approach to find out about the language of a string
+    Currently only supports german, english and french. Based on counting special words.
+    """
     counts = [0, 0, 0]
     counts[0] += document.count(" ein ")
     counts[0] += document.count(" der ")
@@ -55,9 +56,36 @@ def language_decider(document):
     return np.argmax(counts)
 
 def remove_stopwords(words, language='german'):
-    analyzer = WordNGramAnalyzer()
     i = 0
     for doc in words:
         words[i] = [ elem for elem in doc if elem not in stopwords.words(language) ]
         i = i + 1
     return words
+
+def convert_to_n_gram_matrix(documents): 
+    """Split documents to 1 grams"""
+    analyzer = WordNGramAnalyzer()
+    word_matrix = []
+    for i in range(len(documents)):
+        grams = analyzer.analyze(documents[i])
+        word_matrix.append(grams)
+    return word_matrix
+
+def stem_word_matrix(word_matrix):
+    """Stem a matrix of words with a german a german SnowballStemmer.
+    during this process the word_matrix will be modified
+    """ 
+    stemmer = SnowballStemmer("german", ignore_stopwords=False)
+    for i in range(len(word_matrix)):
+        for j in range(len(word_matrix[i])):
+            word_matrix[i][j] = stemmer.stem(word_matrix[i][j])
+    return word_matrix
+
+def thesaurus_extend_matrix(word_matrix):
+    """Extend word_matrix.
+    Look up each word in a thesaurus and add synonyms to matrix.
+    """ 
+    for i in range(len(word_matrix)):
+        for j in range(len(word_matrix[i])):
+            synonyms = thes.find_word_stem(word_matrix[i][j])
+            word_matrix[i].append(synonyms)

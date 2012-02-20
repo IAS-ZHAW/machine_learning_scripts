@@ -7,15 +7,15 @@
 # Author Thomas Niederberger
 
 import re
+import os
 
 """
   - deal with double s
   - deal with ä, ö, ü
-  - use set to ensure no duplicates gets added
   - remove special classes (vulgäre, derb)
 """
 class OpenThesaurus:
-    def __init__(self, path="openthesaurus.txt", all_lowercase = False, remove_remarks = True):
+    def __init__(self, path=os.path.dirname(__file__)+"\\openthesaurus.txt", all_lowercase = False, remove_remarks = True):
         self.__all_lowercase = all_lowercase
         self.__entries = []
         self.__separator = ';'
@@ -54,11 +54,11 @@ class OpenThesaurus:
         return self.find_regex("(^|%s)%s\w{0,2}(%s|$|\s)" % (self.__separator, word, self.__separator))    
     
     def find_regex(self, regex_pattern):
-        l = []
+        l = set([])
         reg = re.compile(regex_pattern)
         for line in self.__entries:
             if reg.search(line):
-                l.extend(line.rsplit(self.__separator))
+                l.update(line.rsplit(self.__separator))
         return l
 
 if __name__ == "__main__":
