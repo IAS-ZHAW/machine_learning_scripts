@@ -10,7 +10,7 @@ import random as rd
 import copy as copy
 import numpy as np
 import scipy.sparse as sparse
-import pca as pca
+import ml.feature.pca as pca
 import re
 rnd = rd.random()
 
