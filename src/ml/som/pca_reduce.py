@@ -8,7 +8,7 @@ from functions import *
 import pickle
 import scipy
 from visualize import *
-from pca import *
+from ml.feature.pca import *
 import scipy.sparse as sparse
 
 # read file

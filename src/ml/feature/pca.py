@@ -30,7 +30,6 @@ def pca(data, dimensions = 2):
     noMeansData = data - np.mean(data, 0)
 
     loc = np.transpose(np.dot(np.transpose(u_matrix[:, 0:dimensions]), np.transpose(noMeansData)))
-    #singular_values = np.diag(lambda_matrix)
     
     return (lambda_matrix, loc, u_matrix[:, 0:dimensions])
 
@@ -45,10 +44,9 @@ def mds(dist, dimensions = 2):
     J = np.eye(n) - np.ones(n, 'float')/n
     B = -1.0/2.0 * np.dot(np.dot(J, squared), J)
     
-    #better use svd!!
-    val, vec = np.linalg.eig(B)
+    u_matrix, val, v_matrix = np.linalg.svd(B)
     
     val = np.abs(val) #taking absolute values in case of negative eigenvalues occur. Not sure whether this is allowed
-    eigInd = np.flipud(np.argsort(val)[(n-dimensions):n])
-    loc = np.dot(vec[:, eigInd], np.sqrt(np.diag(val[eigInd])))
-    return loc
+    principal_component_indices = np.flipud(np.argsort(val)[(n-dimensions):n])
+    loc = np.dot(u_matrix[:, principal_component_indices], np.sqrt(np.diag(val[principal_component_indices])))
+    return (val, loc, u_matrix[:, principal_component_indices])

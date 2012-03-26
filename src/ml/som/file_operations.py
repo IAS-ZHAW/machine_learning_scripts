@@ -9,36 +9,37 @@ import pickle
 from classes import *
 from functions import *
 
-def read_file(name,named=False,clustered=False):
+def read_file(name,named=False,clustered=False,delimiter=';'):
   f = open(name)
   file = f.read() 
-  f.close
   file = re.split('\s*\n',file)
  
-  words = file[0].split(";")
+  words = file[0].split(delimiter)
 
   if clustered:
      words = words[0:-1]
   
-  data = file[1:-1]
+  data = file
   table = {}
   clusters = {}
   for i,line in enumerate(data):
-    vector = re.split(';',line)
+    if len(line) == 0:
+        continue
+    vector = re.split(delimiter, line)
 
     if named:
-      key = vector[0]
-      key = re.sub('\"','',key)
-      vector1 = to_float(vector[1:])
-      table[key] = vector1
+        key = vector[0]
+        key = re.sub('\"','',key)
+        vector1 = to_float(vector[1:])
+        table[key] = vector1
     else:
-      key = "idea"+str(i)
-      if clustered:
-          table[key] = to_float(vector[0:-1])
-          clusters[key] = vector[-1]
-      else:
-          vector = to_float(vector)
-          table[key] = vector
+        key = "idea"+str(i)
+        if clustered:
+            table[key] = to_float(vector[0:-1])
+            clusters[key] = vector[-1]
+        else:
+            vector = to_float(vector)
+            table[key] = vector
   space = Space(table,words,named=named)
 
   if clustered:

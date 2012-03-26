@@ -15,7 +15,7 @@ def gaussian0(x, a):
 def decay(t, tau, x0):
     return x0 * np.exp(-float(t) / tau)
 
-def length(x):
+def euclidian_length(x):
     return np.sqrt(np.dot(x, x))
 
 def distance(x, y):
@@ -25,13 +25,10 @@ def distance(x, y):
     return np.sqrt(np.dot(a, a))
 
 def normalize(x):
-    if length(x) == 0:
+    if euclidian_length(x) == 0:
         return np.array(x)
     else:
-        return np.array(x) * (1 / float(length(x)))
-
-def normalize0(x):
-    return x * (1.0 / length(x))
+        return np.array(x) * (1 / float(euclidian_length(x)))
 
 def torus_subtract(x, y, size):      # x and y are scipy arrays
     d = y - x
@@ -48,13 +45,6 @@ def mod_range(a, b, mod):
         return range(a, b)
     else:
         return range(a, mod) + range(0, b)
-
-# array methods
-def makezerovector(n):
-    vector = []
-    for i in range(n):
-        vector.append(0)
-    return vector
 
 def to_float(array):
     out = []
@@ -86,17 +76,10 @@ def pick_random0(vector):
 def random_int(n):
     return int(random() * n)
 
-def mean_length(matrix):
-    l = []
-    for x in matrix:
-        l.append(length(x))
-    return np.mean(l)
-
-def iszero(x):
+def is_zero_vector(x):
     for a in x:
         if a != 0:
             return False
-            break
     return True
 
 def find_best_match(vector, matrix):
@@ -110,17 +93,3 @@ def find_best_match(vector, matrix):
             max = d
             imax = i
     return imax
-
-def combinations(vectors):
-    if len(vectors) == 1:
-        out = []
-        for i in vectors[0]:
-            out.append([i])
-        return out
-    else:
-        comb = combinations(vectors[1:])
-        out = []
-        for xx in comb:
-            for i in vectors[0]:
-                out.append(xx + [i])
-        return out

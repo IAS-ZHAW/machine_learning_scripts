@@ -11,7 +11,8 @@ from plot_graphs import *
 
 # read file
 named = False
-space,clusters = read_file("input.dat",named=False,clustered=True)
+#space,clusters = read_file("input.dat",named=False,clustered=True)
+space, clusters = read_file(r"C:\Daten\atizo\data-repo\tf\out-tf-project-8881.csv",named=False,clustered=True, delimiter=' ')
 
 #space = read_file("input.dat",named=named)
 space.remove_zero_vectors()
@@ -22,7 +23,7 @@ space.remove_zero_vectors()
 #space.add_symbol_vectors(0.1)
 
 # initialize Map
-mymap = Map([15,15],space)
+mymap = Map([20,20],space)
 
 # iterate
 mymap.init_optimization()

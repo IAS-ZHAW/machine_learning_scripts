@@ -14,7 +14,7 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from text.thes.openthesaurus import OpenThesaurus
 
-replacements = {'�' : 'a', '�' : 'o', 'ü' : 'u', '�' : 'e', '�' : 'a', '�' : 'e', '�' : 'ss', "buddel" : '', "willi" : '', "kunst" : '', "kunstler" : '', " k�nstler" : '', " werk" : '', " art" : '', " museum" : '', " bad" : ''}
+replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
 thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
 
 def to_lower(documents):
@@ -33,10 +33,10 @@ def remove_urls(documents):
     return documents
 
 
-def remove_special_chars(documents):
-    """Removes special characters like �, �, �, � from a list of strings"""
+def remove_special_chars(documents, repl = replacements):
+    """Removes special characters like ä, ö, ü, ß from a list of strings"""
     for i in range(len(documents)):        
-        for key, value in replacements.items():
+        for key, value in repl.items():
             documents[i] = documents[i].replace(key, value)    
     return documents
 

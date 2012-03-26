@@ -20,7 +20,7 @@ class Space:
         self.words = words    
         self.dimension = len(self.words)
         for item in self.table:
-            assert len(self.table[item]) == self.dimension, 'size of vector \"' + item + '\" does not equal dimension'
+            assert len(self.table[item]) == self.dimension, 'size of vector \"' + item + '\"=' + str(len(self.table[item])) +' does not equal dimension ' + str(self.dimension) 
         if not named:
             self.create_idea_names()
 
@@ -43,7 +43,7 @@ class Space:
     def remove_zero_vectors(self):
         table = copy.copy(self.table)
         for item in table:
-            if fn.iszero(table[item]):
+            if fn.is_zero_vector(table[item]):
                 self.table.pop(item)
         
     def getmatrix(self):
@@ -102,7 +102,7 @@ class Map:
         self.size.reverse()
         print self.size
         self.space = space
-        #self.space.normalize()
+        self.space.normalize()
         self.neurons = self.populate(self.size)
         self.time = 0
         
@@ -112,6 +112,7 @@ class Map:
         self.sigma0 = 0.5 * scipy.sqrt(scipy.dot(size, size))                      # parameter for gaussian neighbourhood function
         
         self.renormalization_threshold = params["renormalize"]
+        """ level to decide when 'neighbourhood is zero'"""
         self.gaussian_threshold = 1e-5
     
     def setsize(self, x):
@@ -227,45 +228,32 @@ class Map:
         return imax
     
     def find_bmu1(self, vector):
-        m = 1e8
-        i = -1 
-        imin = 0
-        for weight in self.weights:
-            i += 1
-            #d = fn.distance(weight,vector)
-            delta = weight - vector
-            d = np.dot(delta, delta)
-            if d < m:
-                m = d
-                imin = i
-        #dist = np.power(self.weights - vector, 2)
-        #imin = np.argmin(np.sum(dist, 1))
+        delta = self.weights - vector
+        dist = np.power(self.weights - vector, 2)
+        imin = np.argmin(np.sum(dist, 1))
         return imin
     
     def distort0(self, vector, time):
+        """ here the actual work is done => optimize here"""
         sigma = fn.decay(time, self.tau1, self.sigma0)
         a = 1.0 / (2.0 * sigma ** 2)
         bmu = self.find_bmu1(vector)
         w = self.weights[bmu]
         
-        #     normal = scipy.dot(w, w)
-        #     if normal < self.renormalization_threshold:
-        #       self.renormalize()       
-        #print fn.distance(w,vector)  
-        
         learning = fn.decay(time, self.tau2, self.nu0)
-        adaption = 0
+        total_correction = 0
         #could probably written in a vectorized way
-        for i, weight in enumerate(self.weights):
+        positions = self.positions - self.positions[bmu]
+        deltas = (vector - self.weights)
+        for i, delta_w in enumerate(deltas):
         #       x = fn.torus_subtract( self.positions[i] , self.positions[bmu] , self.size)        # torus geometry
-            x = self.positions[i] - self.positions[bmu]                                      # rectangular geometry
-            gauss = fn.gaussian0(x, a)
+            gauss = fn.gaussian0(positions[i], a)
             if gauss > self.gaussian_threshold:
-                delta_w = (vector - weight)
-                self.weights[i] = weight + gauss * learning * delta_w  
+                #delta_w = (vector - weight)
+                self.weights[i] = self.weights[i] + gauss * learning * delta_w  
                 #self.weights[i] = weight + gauss * delta_w #without learning rate
-                adaption = adaption + np.dot(delta_w, delta_w)
-        return adaption
+                total_correction = total_correction + np.dot(delta_w, delta_w)
+        return total_correction
     
     def iterate0(self, time):
         t = 0
