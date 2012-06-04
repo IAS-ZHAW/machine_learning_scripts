@@ -27,9 +27,10 @@ def pca(data, dimensions = 2):
     u_matrix, lambda_matrix, v_matrix = np.linalg.svd(covariance)
     
     # remove means from original data
-    noMeansData = data - np.mean(data, 0)
+    no_means_data = data - np.mean(data, 0)
 
-    loc = np.transpose(np.dot(np.transpose(u_matrix[:, 0:dimensions]), np.transpose(noMeansData)))
+    #loc = np.dot(u_matrix[:, 0:dimensions].T, no_means_data.T).T
+    loc = np.transpose(np.dot(np.transpose(u_matrix[:, 0:dimensions]), np.transpose(no_means_data)))
     
     return (lambda_matrix, loc, u_matrix[:, 0:dimensions])
 
