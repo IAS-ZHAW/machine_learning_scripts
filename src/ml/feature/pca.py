@@ -24,11 +24,11 @@ def pca(data, dimensions = 2):
     loc : ndarray
         PCA matrix of shape (# of dataitems, dimensions)
     """
-    indices = np.sum(data > 0, 0)
-    data = data[:, indices > 1.0]
+    #indices = np.sum(data > 0, 0)
+    #data = data[:, indices > 1.0]
     covariance = np.cov(np.transpose(data))
-    u_matrix, lambda_matrix, v_matrix = svds(csr_matrix(covariance), k=dimensions)
-    #u_matrix, lambda_matrix, v_matrix = np.linalg.svd(covariance)
+    #u_matrix, lambda_matrix, v_matrix = svds(csr_matrix(covariance), k=dimensions)
+    u_matrix, lambda_matrix, v_matrix = np.linalg.svd(covariance)
     
     # remove means from original data
     no_means_data = data - np.mean(data, 0)
