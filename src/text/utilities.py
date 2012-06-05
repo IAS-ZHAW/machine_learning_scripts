@@ -17,6 +17,9 @@ from text.thes.openthesaurus import OpenThesaurus
 replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
 thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
 
+def is_stopword(word, language='german'):
+    return word in stopwords.words(language)
+
 def to_lower(documents):
     """Transforms a list of strings to lowercase"""
     for i in range(len(documents)):
@@ -32,12 +35,20 @@ def remove_urls(documents):
         documents[i] = re.sub('www\.\S+', '', documents[i])
     return documents
 
+def remove_words(word_matrix, words):
+    for i, w in enumerate(word_matrix):
+        word_matrix[i] = [ elem for elem in w if elem.lower() not in words() ]
+    return word_matrix
 
-def remove_special_chars(documents, repl = replacements):
+def remove_special_chars(document, repl = replacements):
+    for key, value in repl.items():
+        document = document.replace(key, value)
+    return document
+
+def remove_special_chars_list(documents, repl = replacements):
     """Removes special characters like ä, ö, ü, ß from a list of strings"""
-    for i in range(len(documents)):        
-        for key, value in repl.items():
-            documents[i] = documents[i].replace(key, value)    
+    for i in range(len(documents)):
+        documents[i] = remove_special_chars(documents[i], repl)
     return documents
 
 def language_decider(document):
@@ -57,19 +68,34 @@ def language_decider(document):
 
 def remove_stopwords(words, language='german'):
     i = 0
-    for doc in words:
-        words[i] = [ elem for elem in doc if elem not in stopwords.words(language) ]
-        i = i + 1
+    for w in words:
+        words[i] = [ elem for elem in w if elem.lower() not in stopwords.words(language) ]
+        i += 1
     return words
 
 def convert_to_n_gram_matrix(documents): 
     """Split documents to 1 grams"""
-    analyzer = WordNGramAnalyzer()
+    
+    def repl(m):
+        #inner_word = list(m.group(2))
+        #random.shuffle(inner_word)
+        return " " + m.group(3).lower()
+    
+    pattern = r'\b\w\w+\b'
+    compiled = re.compile(pattern, re.UNICODE)
+    matrix = []
+    for d in documents:
+        doc = unicode(d)
+        doc = re.sub(r"(\.)(\W*)(.)", repl, doc)
+        words = compiled.findall(doc)
+        matrix.append(words)
+    return matrix
+    """analyzer = WordNGramAnalyzer()
     word_matrix = []
     for i in range(len(documents)):
         grams = analyzer.analyze(documents[i])
         word_matrix.append(grams)
-    return word_matrix
+    return word_matrix"""
 
 def stem_word_matrix(word_matrix):
     """Stem a matrix of words with a german a german SnowballStemmer.

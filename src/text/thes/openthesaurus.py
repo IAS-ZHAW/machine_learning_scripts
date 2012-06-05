@@ -51,15 +51,19 @@ class OpenThesaurus:
     def find_word_stem(self, word):
         if self.__all_lowercase:
             word = word.lower()
-        return self.find_regex("(^|%s)%s\w{0,2}(%s|$|\s)" % (self.__separator, word, self.__separator))    
-    
+        return self.find_regex("(^|%s)%s\w{0,2}(%s|$)" % (self.__separator, word, self.__separator))
+
     def find_regex(self, regex_pattern):
         l = set([])
         reg = re.compile(regex_pattern)
-        for line in self.__entries:
+        for syngroup, line in enumerate(self.__entries):
             if reg.search(line):
-                l.update(line.rsplit(self.__separator))
+                l.add(syngroup)
+                #l.update(line.rsplit(self.__separator))
         return l
+
+    def get_syngroup(self, id):
+        return self.__entries[id]
 
 if __name__ == "__main__":
     thes = OpenThesaurus(all_lowercase = True)
@@ -74,4 +78,4 @@ if __name__ == "__main__":
     words = thes.find_beginning('schlaf')
     print words
     words = thes.find_word_stem('schlaf')
-    print words       
+    print words
