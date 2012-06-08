@@ -81,7 +81,7 @@ def convert_to_n_gram_matrix(documents):
         #random.shuffle(inner_word)
         return " " + m.group(3).lower()
     
-    pattern = r'\b\w\w+\b'
+    pattern = r'\b\w\w+\b' # pattern to define a word
     compiled = re.compile(pattern, re.UNICODE)
     matrix = []
     for d in documents:
@@ -90,15 +90,9 @@ def convert_to_n_gram_matrix(documents):
         words = compiled.findall(doc)
         matrix.append(words)
     return matrix
-    """analyzer = WordNGramAnalyzer()
-    word_matrix = []
-    for i in range(len(documents)):
-        grams = analyzer.analyze(documents[i])
-        word_matrix.append(grams)
-    return word_matrix"""
 
 def stem_word_matrix(word_matrix):
-    """Stem a matrix of words with a german a german SnowballStemmer.
+    """Stem a matrix of words with a german SnowballStemmer (porter stemmer). 
     during this process the word_matrix will be modified
     """ 
     stemmer = SnowballStemmer("german", ignore_stopwords=False)
