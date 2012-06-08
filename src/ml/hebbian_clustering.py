@@ -40,8 +40,8 @@ def project_items(data, W, W_subgroups):
     y = (np.sin(cluster_mapping * 2 * np.pi / (n_clusters)) + sub_locations[:, 1])
     return (x, y, cluster_mapping)
 
-def learn_weights(data, W, W_subgroups, n_clusters, learning_rate, visual_learning_rate, n_visual_dimensions=2, gamma=3.0):
-    W = hebbian_learning(data, W, n_clusters, 1000, learning_rate, gamma)
+def learn_weights(data, W, W_subgroups, n_clusters, iterations, learning_rate, visual_learning_rate, n_visual_dimensions=2, gamma=3.0):
+    W = hebbian_learning(data, W, n_clusters, iterations, learning_rate, gamma)
     #print np.sum(W.T * reference_vectors, 0) / np.power(np.sum(np.power(W, 2), 1), 0.5)
 
     #cluster
