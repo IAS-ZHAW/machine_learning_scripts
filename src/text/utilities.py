@@ -9,10 +9,12 @@
 import re
 import numpy as np
 
+from scikits.learn.feature_extraction.text import TfidfTransformer
 from scikits.learn.feature_extraction.text import WordNGramAnalyzer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from text.thes.openthesaurus import OpenThesaurus
+from word_dict import *
 
 replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
 thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
@@ -73,6 +75,11 @@ def remove_stopwords(words, language='german'):
         i += 1
     return words
 
+"""def remove_stopwords_list(word_lists):
+    for index in range(len(word_lists)):
+        word_lists[index] = remove_stopwords(word_lists[index])
+    return word_lists"""
+
 def convert_to_n_gram_matrix(documents): 
     """Split documents to 1 grams"""
     
@@ -101,6 +108,33 @@ def stem_word_matrix(word_matrix):
             word_matrix[i][j] = stemmer.stem(word_matrix[i][j])
     return word_matrix
 
+def clean_texts(texts, projectspecific_replacements={}):
+    texts = to_lower(texts)
+    texts = remove_urls(texts)
+    texts = remove_special_chars_list(texts)
+    if id in projectspecific_replacements:
+        texts = remove_special_chars_list(texts, )
+    word_matrix = convert_to_n_gram_matrix(texts)
+    #word_matrix = thesaurus_extend_matrix(word_matrix)
+    word_matrix = stem_word_matrix(word_matrix)
+    word_matrix = remove_stopwords(word_matrix)
+    return word_matrix
+
+def get_word_matrix(text_list, dict):
+    for word_list in text_list:
+        dict.fit(word_list)
+    mapping = dict.id_mapping_by_document_frequency()
+    word_matrix = np.zeros((len(text_list), len(mapping)))
+    doc_index = 0
+    for word_list in text_list:
+        index_list = dict.vectorize(word_list)
+        #texts_index.append(index_list)
+        for i in index_list:
+            word_matrix[doc_index, mapping[i]] += 1
+        doc_index += 1
+    return word_matrix
+
+
 def thesaurus_extend_matrix(word_matrix):
     """Extend word_matrix.
     Look up each word in a thesaurus and add synonyms to matrix.
@@ -109,3 +143,20 @@ def thesaurus_extend_matrix(word_matrix):
         for j in range(len(word_matrix[i])):
             synonyms = thes.find_word_stem(word_matrix[i][j])
             word_matrix[i].append(synonyms)
+            
+def texts_2_tfidf(texts):
+    stemmed = clean_texts(texts)
+    word_dict = WordDict()
+    word_matrix = get_word_matrix(stemmed, word_dict)
+    #calculate tag matrix from stemmed words (german stopwords will be removed too. but this should better be done in the beginning)
+    #relevant_tags, tag_matrix = generate_tag_matrix(stemmed, 2*tag_weight)
+    tf_matrix = tf_idf(word_matrix)
+    return tf_matrix
+            
+def tf_idf(tag_matrix):
+    #calculate TF-IDF
+    tfidf = TfidfTransformer(None, use_idf=True)
+    tfidf.fit(tag_matrix)
+    tag_matrix = tfidf.transform(tag_matrix)
+    dense_tag_matrix = tag_matrix.todense()
+    return dense_tag_matrix
