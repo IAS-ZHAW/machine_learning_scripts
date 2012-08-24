@@ -32,7 +32,10 @@ def normalized_min_cut(graph):
     M = np.dot(D_half_inv, np.dot((D - m_adjacency), D_half_inv))
 
     (w, v) = np.linalg.eig(M)
-    v_partition = v[:, 1]
+    #find index of second smallest eigenvalue
+    index = np.argsort(w)[1]
+    
+    v_partition = v[:, index]
     v_partition = np.sign(v_partition)
     return v_partition
     
