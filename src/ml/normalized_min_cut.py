@@ -43,8 +43,11 @@ def normalized_min_cut(graph):
 if __name__ == "__main__":
     #create graph
     #graph = nx.tutte_graph()
-    #graph = nx.barbell_graph(10, 0)
-    graph = nx.lollipop_graph(10, 10)
+    graph = nx.barbell_graph(10, 0)
+    #add some additional edges
+    graph.add_edge(3, 13)
+    graph.add_edge(4, 13)    
+    #graph = nx.lollipop_graph(10, 10)
     
     v_partition = normalized_min_cut(graph)
     colors = np.zeros((len(v_partition), 3)) + 1.0
