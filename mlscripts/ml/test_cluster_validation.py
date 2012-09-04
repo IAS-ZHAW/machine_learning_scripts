@@ -1,6 +1,6 @@
 import unittest
 
-from cluster_validation import *
+from mlscripts.ml.cluster_validation import *
 from scipy.spatial.distance import pdist, squareform
 
 from pylab import *

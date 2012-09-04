@@ -6,8 +6,8 @@
 # Institute of Applied Simulation (ZHAW)
 # Author Thomas Niederberger
 
-from text.utilities import *
-from text.word_desc import WordDesc
+from mlscripts.text.utilities import *
+from mlscripts.text.word_desc import WordDesc
 from numpy import argsort
 
 class WordDict:

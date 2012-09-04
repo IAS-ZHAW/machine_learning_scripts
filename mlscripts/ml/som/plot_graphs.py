@@ -8,8 +8,8 @@ import matplotlib.pyplot as pyplot
 import matplotlib.cm as cm
 from scipy import *
 import random
-from visualize import *
-from flatten import *
+from mlscripts.ml.som.visualize import *
+from mlscripts.ml.som.flatten import *
 
 def shade_map(distances):
     im = pyplot.imshow(distances,interpolation="nearest",cmap=cm.gray,origin='lower')

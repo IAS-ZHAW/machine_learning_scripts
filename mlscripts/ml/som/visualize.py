@@ -3,10 +3,10 @@
 # Institute of Applied Simulation (ZHAW)
 # Author Timo Jeranko
 
-from classes import *
-from flatten import *
+from mlscripts.ml.som.classes import *
+from mlscripts.ml.som.flatten import *
 import scipy as scipy
-import functions as fn
+import mlscripts.ml.som.functions as fn
 import re
 from collections import Counter
 

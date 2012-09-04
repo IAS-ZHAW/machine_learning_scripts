@@ -3,12 +3,12 @@
 # Institute of Applied Simulation (ZHAW)
 # Author Timo Jeranko
 
-from file_operations import *
-from functions import *
+from mlscripts.ml.som.file_operations import *
+from mlscripts.ml.som.functions import *
 import pickle
 import scipy
-from visualize import *
-from ml.feature.pca import *
+from mlscripts.ml.som.visualize import *
+from mlscripts.ml.feature.pca import *
 import scipy.sparse as sparse
 
 # read file

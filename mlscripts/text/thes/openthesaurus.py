@@ -15,7 +15,7 @@ import os
   - remove special classes (vulgäre, derb)
 """
 class OpenThesaurus:
-    def __init__(self, path=os.path.dirname(__file__)+"\\openthesaurus.txt", all_lowercase = False, remove_remarks = True):
+    def __init__(self, path=os.path.join(os.path.dirname(__file__), 'openthesaurus.txt'), all_lowercase = False, remove_remarks = True):
         self.__all_lowercase = all_lowercase
         self.__entries = []
         self.__separator = ';'

@@ -7,7 +7,7 @@
 # Author Thomas Niederberger
 
 import numpy as np
-from util import *
+from mlscripts.ml.util import *
 
 def project_items(data, W, W_subgroups):
     """

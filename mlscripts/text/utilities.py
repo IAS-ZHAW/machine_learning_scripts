@@ -13,8 +13,8 @@ from scikits.learn.feature_extraction.text import TfidfTransformer
 from scikits.learn.feature_extraction.text import WordNGramAnalyzer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
-from text.thes.openthesaurus import OpenThesaurus
-from word_dict import *
+from mlscripts.text.thes.openthesaurus import OpenThesaurus
+from mlscripts.text.word_dict import *
 
 replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
 thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
