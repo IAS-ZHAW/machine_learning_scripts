@@ -27,7 +27,7 @@ def project_items(data, W, W_subgroups):
     location = np.dot(data, W.T)    
     value = np.max(abs(location), 1)
     cluster_mapping = np.argmax(abs(location), 1)
-    print [np.sum(cluster_mapping == i) for i in range(n_clusters)]
+    #print [np.sum(cluster_mapping == i) for i in range(n_clusters)]
     
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:
