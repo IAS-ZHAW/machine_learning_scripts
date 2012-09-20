@@ -14,7 +14,7 @@ class WordDict:
     def __init__(self):
         self.__current_id = 0
         self.__words = {}
-    
+
     def vectorize(self, word_list):
         """Word_list must be in a sorted order"""
         #cleaned_list.sort()
@@ -27,7 +27,7 @@ class WordDict:
             else:
                 raise NameError('unknown word %s' % stem)
         return id_list
-    
+
     def fit(self, word_list):
         """Word_list must be in a sorted order"""
         #cleaned_list.sort()
@@ -45,7 +45,7 @@ class WordDict:
     @property
     def size(self):
         return self.__current_id
-    
+
     def id_mapping_by_document_frequency(self, frequency=2):
         c = 0
         mapping = {}
@@ -54,3 +54,8 @@ class WordDict:
                 mapping[word.id] = c
                 c += 1
         return mapping
+
+    def get_by_id(self, id):
+        for key, entry in self.__words.iteritems():
+            if entry.id == id:
+                return key
