@@ -6,8 +6,8 @@
 import re
 import time
 import pickle
-from classes import *
-from functions import *
+from mlscripts.ml.som.classes import *
+from mlscripts.ml.som.functions import *
 
 def read_file(name,named=False,clustered=False,delimiter=';'):
   f = open(name)

@@ -3,14 +3,14 @@
 # Institute of Applied Simulation (ZHAW)
 # Author Timo Jeranko
 
-import functions as fn
-from flatten import *
+import mlscripts.ml.som.functions as fn
+from mlscripts.ml.som.flatten import *
 import scipy as scipy
 import random as rd
 import copy as copy
 import numpy as np
 import scipy.sparse as sparse
-import ml.feature.pca as pca
+import mlscripts.ml.feature.pca as pca
 import re
 rnd = rd.random()
 

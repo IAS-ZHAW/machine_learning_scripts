@@ -13,11 +13,11 @@ from scikits.learn.feature_extraction.text import TfidfTransformer
 from scikits.learn.feature_extraction.text import WordNGramAnalyzer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
-from text.thes.openthesaurus import OpenThesaurus
-from word_dict import *
+from mlscripts.text.thes.openthesaurus import OpenThesaurus
+from mlscripts.text.word_dict import *
 
 replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
-thes = OpenThesaurus(all_lowercase = False, remove_remarks = True)
+thes = OpenThesaurus(all_lowercase=False, remove_remarks=True)
 
 def is_stopword(word, language='german'):
     return word in stopwords.words(language)
@@ -42,12 +42,12 @@ def remove_words(word_matrix, words):
         word_matrix[i] = [ elem for elem in w if elem.lower() not in words() ]
     return word_matrix
 
-def remove_special_chars(document, repl = replacements):
+def remove_special_chars(document, repl=replacements):
     for key, value in repl.items():
         document = document.replace(key, value)
     return document
 
-def remove_special_chars_list(documents, repl = replacements):
+def remove_special_chars_list(documents, repl=replacements):
     """Removes special characters like ä, ö, ü, ß from a list of strings"""
     for i in range(len(documents)):
         documents[i] = remove_special_chars(documents[i], repl)
@@ -80,14 +80,14 @@ def remove_stopwords(words, language='german'):
         word_lists[index] = remove_stopwords(word_lists[index])
     return word_lists"""
 
-def convert_to_n_gram_matrix(documents): 
+def convert_to_n_gram_matrix(documents):
     """Split documents to 1 grams"""
-    
+
     def repl(m):
         #inner_word = list(m.group(2))
         #random.shuffle(inner_word)
         return " " + m.group(3).lower()
-    
+
     pattern = r'\b\w\w+\b' # pattern to define a word
     compiled = re.compile(pattern, re.UNICODE)
     matrix = []
@@ -101,7 +101,7 @@ def convert_to_n_gram_matrix(documents):
 def stem_word_matrix(word_matrix):
     """Stem a matrix of words with a german SnowballStemmer (porter stemmer). 
     during this process the word_matrix will be modified
-    """ 
+    """
     stemmer = SnowballStemmer("german", ignore_stopwords=False)
     for i in range(len(word_matrix)):
         for j in range(len(word_matrix[i])):
@@ -113,7 +113,7 @@ def clean_texts(texts, projectspecific_replacements={}):
     texts = remove_urls(texts)
     texts = remove_special_chars_list(texts)
     if id in projectspecific_replacements:
-        texts = remove_special_chars_list(texts, )
+        texts = remove_special_chars_list(texts,)
     word_matrix = convert_to_n_gram_matrix(texts)
     #word_matrix = thesaurus_extend_matrix(word_matrix)
     word_matrix = stem_word_matrix(word_matrix)
@@ -138,12 +138,12 @@ def get_word_matrix(text_list, dict):
 def thesaurus_extend_matrix(word_matrix):
     """Extend word_matrix.
     Look up each word in a thesaurus and add synonyms to matrix.
-    """ 
+    """
     for i in range(len(word_matrix)):
         for j in range(len(word_matrix[i])):
             synonyms = thes.find_word_stem(word_matrix[i][j])
             word_matrix[i].append(synonyms)
-            
+
 def texts_2_tfidf(texts):
     stemmed = clean_texts(texts)
     word_dict = WordDict()
@@ -151,8 +151,8 @@ def texts_2_tfidf(texts):
     #calculate tag matrix from stemmed words (german stopwords will be removed too. but this should better be done in the beginning)
     #relevant_tags, tag_matrix = generate_tag_matrix(stemmed, 2*tag_weight)
     tf_matrix = tf_idf(word_matrix)
-    return tf_matrix
-            
+    return tf_matrix, word_dict
+
 def tf_idf(tag_matrix):
     #calculate TF-IDF
     tfidf = TfidfTransformer(None, use_idf=True)

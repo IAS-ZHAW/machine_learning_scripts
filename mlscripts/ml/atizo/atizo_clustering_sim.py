@@ -4,8 +4,8 @@
 from matplotlib.pyplot import *
 import random
 import csv
-from ml.util import *
-from ml.hebbian_clustering import *
+from mlscripts.ml.util import *
+from mlscripts.ml.hebbian_clustering import *
 import colorsys
 
 def iterate(data, n_clusters, n_visual_dimensions):

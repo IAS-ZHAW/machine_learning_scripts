@@ -3,11 +3,11 @@
 # Institute of Applied Simulation (ZHAW)
 # Author Timo Jeranko
 
-from file_operations import *
-from functions import *
+from mlscripts.ml.som.file_operations import *
+from mlscripts.ml.som.functions import *
 import pickle
-from visualize import *
-from plot_graphs import *
+from mlscripts.ml.som.visualize import *
+from mlscripts.ml.som.plot_graphs import *
 
 # read file
 named = False
