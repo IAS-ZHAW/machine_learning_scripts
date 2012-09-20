@@ -7,7 +7,9 @@
 # Author Thomas Niederberger
 
 import numpy as np
+
 from mlscripts.ml.util import *
+from mlscripts.ml.feature.pca import *
 
 def project_items(data, W, W_subgroups):
     """
@@ -26,7 +28,8 @@ def project_items(data, W, W_subgroups):
     #cluster
     location = np.dot(data, W.T)    
     value = np.max(abs(location), 1)
-    cluster_mapping = np.argmax(abs(location), 1)
+
+    cluster_mapping = np.argmax(location, 1)
     #print [np.sum(cluster_mapping == i) for i in range(n_clusters)]
     
     for i in range(n_clusters):
@@ -39,6 +42,21 @@ def project_items(data, W, W_subgroups):
     x = (np.cos(cluster_mapping * 2 * np.pi / (n_clusters)) + sub_locations[:, 0])
     y = (np.sin(cluster_mapping * 2 * np.pi / (n_clusters)) + sub_locations[:, 1])
     return (x, y, cluster_mapping)
+
+def one_time_learning(data, n_clusters, visual_dimensions=2):
+    (lambda_matrix, loc, W) = pca(data, dimensions=n_clusters)
+    
+    #cluster
+    location = np.dot(data, W)    
+    value = np.max(abs(location), 1)
+    cluster_mapping = np.argmax(location, 1)
+    W_subgroups = [None for i in range(n_clusters)]
+    
+    for i in range(n_clusters):
+        indeces = (cluster_mapping == i)
+        (_, _, W_sub) = pca(data[indeces, :], visual_dimensions)
+        W_subgroups[i] = W_sub.T
+    return (W.T, W_subgroups)
 
 def learn_weights(data, W, W_subgroups, n_clusters, iterations, learning_rate, visual_learning_rate, n_visual_dimensions=2, gamma=3.0):
     W = hebbian_learning(data, W, n_clusters, iterations, learning_rate, gamma)
