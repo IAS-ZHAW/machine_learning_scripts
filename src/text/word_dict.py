@@ -54,3 +54,8 @@ class WordDict:
                 mapping[word.id] = c
                 c += 1
         return mapping
+    
+    def get_by_id(self, id): 
+        for key, entry in self.__words.iteritems(): 
+            if entry.id == id: 
+                return key 

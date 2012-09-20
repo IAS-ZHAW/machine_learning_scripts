@@ -9,8 +9,7 @@
 import re
 import numpy as np
 
-from scikits.learn.feature_extraction.text import TfidfTransformer
-from scikits.learn.feature_extraction.text import WordNGramAnalyzer
+from sklearn.feature_extraction.text import TfidfTransformer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from text.thes.openthesaurus import OpenThesaurus
