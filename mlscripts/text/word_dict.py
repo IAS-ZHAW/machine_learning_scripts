@@ -54,16 +54,8 @@ class WordDict:
                 mapping[word.id] = c
                 c += 1
         return mapping
-<<<<<<< HEAD
 
     def get_by_id(self, id):
         for key, entry in self.__words.iteritems():
             if entry.id == id:
                 return key
-=======
-    
-    def get_by_id(self, id): 
-        for key, entry in self.__words.iteritems(): 
-            if entry.id == id: 
-                return key 
->>>>>>> working_branch
