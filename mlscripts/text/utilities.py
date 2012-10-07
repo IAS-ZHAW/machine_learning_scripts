@@ -8,6 +8,7 @@
 
 import re
 import numpy as np
+from mlscripts.technical.log import *
 
 from sklearn.feature_extraction.text import TfidfTransformer
 from nltk.stem.snowball import SnowballStemmer
@@ -150,6 +151,9 @@ def texts_2_tfidf(texts):
     #calculate tag matrix from stemmed words (german stopwords will be removed too. but this should better be done in the beginning)
     #relevant_tags, tag_matrix = generate_tag_matrix(stemmed, 2*tag_weight)
     tf_matrix = tf_idf(word_matrix)
+    log('analyze word_matrix of size %s/%s' % tf_matrix.shape, LogLevel.INFO)
+    log("first tf-idf row sum %s" % np.sum(tf_matrix[0, :]), LogLevel.VERBOSE)
+    log("first tf-idf row not null %s" % np.sum(tf_matrix[0, :] != 0), LogLevel.VERBOSE)
     return tf_matrix, word_dict
 
 def tf_idf(tag_matrix):

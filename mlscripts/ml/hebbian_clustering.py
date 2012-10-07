@@ -10,6 +10,7 @@ import numpy as np
 
 from mlscripts.ml.util import *
 from mlscripts.ml.feature.pca import *
+from mlscripts.technical.log import *
 
 def project_items(data, W, W_subgroups):
     """
@@ -30,7 +31,9 @@ def project_items(data, W, W_subgroups):
     value = np.max(abs(location), 1)
 
     cluster_mapping = np.argmax(location, 1)
-    #print [np.sum(cluster_mapping == i) for i in range(n_clusters)]
+    log("cluster mapping %s" % str(cluster_mapping), LogLevel.INFO)
+    log("items per cluster: %s" % str([np.sum(cluster_mapping == i) for i in range(n_clusters)]), LogLevel.INFO)
+    log("first PC: %s" % str(W[0, :]), LogLevel.VERBOSE)
     
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:

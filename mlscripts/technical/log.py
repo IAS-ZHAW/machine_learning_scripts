@@ -8,15 +8,16 @@
 
 class LogLevel:
     VERBOSE = 1
-    WARNING = 2
-    ERROR = 3
+    INFO = 2
+    WARNING = 3
+    ERROR = 4
    
 class Environment:
     LOCAL = 1
     SERVER = 2
    
-log_level = VERBOSE
-env = 
+log_level = LogLevel.VERBOSE
+env = Environment.LOCAL
 
 def log(message, level):
     if level >= log_level:
