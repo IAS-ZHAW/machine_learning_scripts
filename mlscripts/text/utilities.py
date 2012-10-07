@@ -15,7 +15,7 @@ from nltk.corpus import stopwords
 from mlscripts.text.thes.openthesaurus import OpenThesaurus
 from mlscripts.text.word_dict import *
 
-replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss'}
+replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss', u'â' : u'a', u'û' : u'u', u'ê' : u'e', u'ô' : u'o'}
 thes = OpenThesaurus(all_lowercase=False, remove_remarks=True)
 
 def is_stopword(word, language='german'):
@@ -159,9 +159,4 @@ def tf_idf(tag_matrix):
     tag_matrix = tfidf.transform(tag_matrix)
     dense_tag_matrix = tag_matrix.todense()
     return dense_tag_matrix
-
-def enrich(texts):
-    thes = OpenThesaurus(all_lowercase=True, remove_remarks=True)
-    for d in documents:
-        
-    return texts
+    
