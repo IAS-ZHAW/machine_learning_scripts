@@ -48,9 +48,9 @@ def project_items(data, W, W_subgroups):
 
 def one_time_learning(data, n_clusters, visual_dimensions=2):
     (lambda_matrix, loc, W) = pca(data, dimensions=n_clusters)
-    
+    no_means_data = data - np.mean(data, 0)
     #cluster
-    location = np.dot(data, W)    
+    location = np.dot(no_means_data, W)    
     value = np.max(abs(location), 1)
     cluster_mapping = np.argmax(location, 1)
     W_subgroups = [None for i in range(n_clusters)]

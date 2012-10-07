@@ -163,3 +163,9 @@ def tf_idf(tag_matrix):
     tag_matrix = tfidf.transform(tag_matrix)
     dense_tag_matrix = tag_matrix.todense()
     return dense_tag_matrix
+
+def enrich(texts):
+    thes = OpenThesaurus(all_lowercase=True, remove_remarks=True)
+    for d in documents:
+        
+    return texts
