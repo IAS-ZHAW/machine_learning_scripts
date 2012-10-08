@@ -8,6 +8,7 @@
 
 import re
 import os
+import logging
 
 """
   - deal with double s
@@ -15,24 +16,24 @@ import os
   - remove special classes (vulgäre, derb)
 """
 class OpenThesaurus:
-    def __init__(self, path=os.path.join(os.path.dirname(__file__), 'openthesaurus.txt'), all_lowercase = False, remove_remarks = True):
+    def __init__(self, path=os.path.join(os.path.dirname(__file__), 'openthesaurus.txt'), all_lowercase=False, remove_remarks=True):
         self.__all_lowercase = all_lowercase
         self.__entries = []
         self.__separator = ';'
-        
+
         f = open(path, 'r')
         for line in f:
-            if line[0] ==  '#': #ignore comments
+            if line[0] == '#': #ignore comments
                 continue
             line = line.strip() # get rid of newline
-            if remove_remarks: 
+            if remove_remarks:
                 reg = re.compile(r"(?P<start>;?)\s*\(.*?\)\s*(?P<end>;?)") # remove everything inside brackets
                 line = reg.sub(r"\g<start>\g<end>", line)
-                
+
             if self.__all_lowercase:
                 line = line.lower()
             self.__entries.append(line)
-  
+
     def find(self, word):
         if self.__all_lowercase:
             word = word.lower()
@@ -42,12 +43,12 @@ class OpenThesaurus:
         if self.__all_lowercase:
             word = word.lower()
         return self.find_regex(".*%s.*" % word)
-    
+
     def find_beginning(self, word):
         if self.__all_lowercase:
             word = word.lower()
         return self.find_regex("(^|%s)%s.*" % (self.__separator, word))
-    
+
     def find_word_stem(self, word):
         if self.__all_lowercase:
             word = word.lower()
@@ -66,7 +67,9 @@ class OpenThesaurus:
         return self.__entries[id]
 
 if __name__ == "__main__":
-    thes = OpenThesaurus(all_lowercase = True)
+    logging.basicConfig()
+
+    thes = OpenThesaurus(all_lowercase=True)
     words = thes.find('schlafen')
     print words
     words = thes.find('Tisch')
