@@ -8,13 +8,15 @@
 
 import re
 import numpy as np
-from mlscripts.technical.log import *
+import logging
 
 from sklearn.feature_extraction.text import TfidfTransformer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from mlscripts.text.thes.openthesaurus import OpenThesaurus
 from mlscripts.text.word_dict import *
+
+logger = logging.getLogger(__name__)
 
 replacements = {u'ä' : u'a', u'ö' : u'o', u'ü' : u'u', u'é' : u'e', u'à' : u'a', u'è' : u'e', u'ß' : u'ss', u'â' : u'a', u'û' : u'u', u'ê' : u'e', u'ô' : u'o'}
 thes = OpenThesaurus(all_lowercase=False, remove_remarks=True)
@@ -151,9 +153,9 @@ def texts_2_tfidf(texts):
     #calculate tag matrix from stemmed words (german stopwords will be removed too. but this should better be done in the beginning)
     #relevant_tags, tag_matrix = generate_tag_matrix(stemmed, 2*tag_weight)
     tf_matrix = tf_idf(word_matrix)
-    log('analyze word_matrix of size %s/%s' % tf_matrix.shape, LogLevel.INFO)
-    log("first tf-idf row sum %s" % np.sum(tf_matrix[0, :]), LogLevel.VERBOSE)
-    log("first tf-idf row not null %s" % np.sum(tf_matrix[0, :] != 0), LogLevel.VERBOSE)
+    logger.info('analyze word_matrix of size %s/%s' % tf_matrix.shape)
+    logger.debug("first tf-idf row sum %s" % np.sum(tf_matrix[0, :]))
+    logger.debug("first tf-idf row not null %s" % np.sum(tf_matrix[0, :] != 0))
     return tf_matrix, word_dict
 
 def tf_idf(tag_matrix):
@@ -163,5 +165,3 @@ def tf_idf(tag_matrix):
     tag_matrix = tfidf.transform(tag_matrix)
     dense_tag_matrix = tag_matrix.todense()
     return dense_tag_matrix
-    
-

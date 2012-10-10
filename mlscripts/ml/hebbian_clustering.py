@@ -7,10 +7,12 @@
 # Author Thomas Niederberger
 
 import numpy as np
+import logging
 
 from mlscripts.ml.util import *
 from mlscripts.ml.feature.pca import *
-from mlscripts.technical.log import *
+
+logger = logging.getLogger(__name__)
 
 def project_items(data, W, W_subgroups):
     """
@@ -24,17 +26,17 @@ def project_items(data, W, W_subgroups):
     n_clusters = W.shape[0]
     n_records = data.shape[0]
     sub_locations = np.zeros((n_records, 2))
-    a_side = np.sqrt(2-2*np.cos(2*np.pi/n_clusters))
-    
+    a_side = np.sqrt(2 - 2 * np.cos(2 * np.pi / n_clusters))
+
     #cluster
-    location = np.dot(data, W.T)    
+    location = np.dot(data, W.T)
     value = np.max(abs(location), 1)
 
     cluster_mapping = np.argmax(location, 1)
-    log("cluster mapping %s" % str(cluster_mapping), LogLevel.INFO)
-    log("items per cluster: %s" % str([np.sum(cluster_mapping == i) for i in range(n_clusters)]), LogLevel.INFO)
-    log("first PC: %s" % str(W[0, :]), LogLevel.VERBOSE)
-    
+    logger.info("cluster mapping %s" % str(cluster_mapping))
+    logger.info("items per cluster: %s" % str([np.sum(cluster_mapping == i) for i in range(n_clusters)]))
+    logger.debug("first PC: %s" % str(W[0, :]))
+
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:
             #(singular_values_dontcare, sub_cluster_location, eigenvec_dontcare) = pca(data[cluster_mapping == i, :], 2)
@@ -50,11 +52,11 @@ def one_time_learning(data, n_clusters, visual_dimensions=2):
     (lambda_matrix, loc, W) = pca(data, dimensions=n_clusters)
     no_means_data = data - np.mean(data, 0)
     #cluster
-    location = np.dot(no_means_data, W)    
+    location = np.dot(no_means_data, W)
     value = np.max(abs(location), 1)
     cluster_mapping = np.argmax(location, 1)
     W_subgroups = [None for i in range(n_clusters)]
-    
+
     for i in range(n_clusters):
         indeces = (cluster_mapping == i)
         (_, _, W_sub) = pca(data[indeces, :], visual_dimensions)
@@ -66,17 +68,17 @@ def learn_weights(data, W, W_subgroups, n_clusters, iterations, learning_rate, v
     #print np.sum(W.T * reference_vectors, 0) / np.power(np.sum(np.power(W, 2), 1), 0.5)
 
     #cluster
-    location = np.dot(data, W.T)    
+    location = np.dot(data, W.T)
     value = np.max(abs(location), 1)
     cluster_mapping = np.argmax(abs(location), 1)
-    
+
     for i in range(n_clusters):
         indeces = (cluster_mapping == i)
         if sum(indeces) > 2:
             W_subgroups[i] = hebbian_learning(data[indeces, :], W_subgroups[i], n_visual_dimensions, 4, visual_learning_rate)
     return (W, W_subgroups)
 
-def hebbian_learning(data, W = None, dimensions = 2, iterations = 100, learning_rate=decay_learning_rate(), gamma=1.0):
+def hebbian_learning(data, W=None, dimensions=2, iterations=100, learning_rate=decay_learning_rate(), gamma=1.0):
     """Executes hebbian learning for the dataset data.
     
     Args:
@@ -93,13 +95,13 @@ def hebbian_learning(data, W = None, dimensions = 2, iterations = 100, learning_
         W = np.random.randn(dimensions, features) #random weight matrix
         #normalize to length = 1 --> divide by length
         W = (W.T * (1 / np.power(np.sum(np.power(W, 2), 1), 0.5))).T
-    
+
     for iter in range(iterations):
         x = data[np.random.randint(0, examples), :] #select random example
         y = np.dot(W, x) #calculate output 
         lower = np.tril(np.outer(y, y))
         lower = lower + gamma * (lower - np.diag(np.diag(lower)))
         adjust = (np.outer(y, x) - np.dot(lower, W))
-        delta_w = learning_rate.next() * adjust 
+        delta_w = learning_rate.next() * adjust
         W = W + delta_w
     return W
