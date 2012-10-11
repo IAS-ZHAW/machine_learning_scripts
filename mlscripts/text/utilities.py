@@ -156,6 +156,8 @@ def texts_2_tfidf(texts):
     logger.info('analyze word_matrix of size %s/%s' % tf_matrix.shape)
     logger.debug("first tf-idf row sum %s" % np.sum(tf_matrix[0, :]))
     logger.debug("first tf-idf row not null %s" % np.sum(tf_matrix[0, :] != 0))
+    logger.debug("total tf-idf not null %s" % np.sum(tf_matrix[:, :] != 0))
+    logger.debug("total tf-idf %s" % np.sum(tf_matrix[:, :]))
     return tf_matrix, word_dict
 
 def tf_idf(tag_matrix):

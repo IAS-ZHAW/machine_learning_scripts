@@ -30,12 +30,12 @@ def project_items(data, W, W_subgroups):
 
     #cluster
     location = np.dot(data, W.T)
-    value = np.max(abs(location), 1)
-
+    value = np.max(location, 1)
     cluster_mapping = np.argmax(location, 1)
     logger.info("cluster mapping %s" % str(cluster_mapping))
     logger.info("items per cluster: %s" % str([np.sum(cluster_mapping == i) for i in range(n_clusters)]))
-    logger.debug("first PC: %s" % str(W[0, :]))
+    logger.debug("PC first component: %s " % str(["%0.3f" % i for i in W[:, 0]]))
+    logger.debug("PC sum components: %s " % str(["%0.3f" % i for i in np.sum(np.abs(W), 1)]))
 
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:
@@ -53,7 +53,7 @@ def one_time_learning(data, n_clusters, visual_dimensions=2):
     no_means_data = data - np.mean(data, 0)
     #cluster
     location = np.dot(no_means_data, W)
-    value = np.max(abs(location), 1)
+    value = np.max(location, 1)
     cluster_mapping = np.argmax(location, 1)
     W_subgroups = [None for i in range(n_clusters)]
 

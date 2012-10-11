@@ -12,6 +12,10 @@ import logging
 def iterate(data, n_clusters, n_visual_dimensions):
     data_no_mean = data - np.mean(data, 0)
 
+    logger.info('analyze word_matrix of size %s/%s' % data.shape)
+    logger.debug("first tf-idf row sum %s" % np.sum(data[0, :]))
+    logger.debug("first tf-idf row not null %s" % np.sum(data_no_mean[0, :] != 0))
+
     fig = figure(1, figsize=(14, 8))
     subplot = fig.add_subplot(111)
 
@@ -24,6 +28,7 @@ def iterate(data, n_clusters, n_visual_dimensions):
 
     (W, W_subgroups) = one_time_learning(data, n_clusters, n_visual_dimensions)
     (x, y, cluster_mapping) = project_items(data_no_mean, W, W_subgroups)
+    
     #rescale "circle" visualization
     visual_location = np.zeros((data.shape[0], n_visual_dimensions))
     visual_location[:, 0] = 500 + 300 * x
@@ -50,5 +55,5 @@ def process_project(tfidf_file):
     iterate(tf_matrix, n_clusters, n_visual_dimensions)
 
 if __name__ == "__main__":
-    logging.basicConfig()
+    logging.basicConfig(level=logging.DEBUG) #)#filename='example.log', filemode='w', 
     process_project("C:/Daten/atizo/data-repo/tf/out-tf-project-50.csv")
